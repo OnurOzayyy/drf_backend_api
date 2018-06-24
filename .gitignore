@@ -2,3 +2,5 @@ ENV_ECOMMERCE/
 notes.txt
 *.pyc
 __pycache__
+db.sqlite3
+products/migrations/
