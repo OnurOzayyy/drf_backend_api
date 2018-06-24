@@ -1,0 +1,4 @@
+ENV_ECOMMERCE/
+notes.txt
+*.pyc
+__pycache__
