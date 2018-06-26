@@ -5,6 +5,12 @@ from .serializers import CategorySerializer
 
 from .models import Category
 
-class CategoryAPIListView(generics.ListCreateAPIView):
+class CategoryListAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+
+class CategoryRetrieveAPIView(generics.RetrieveAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
