@@ -5,3 +5,4 @@ __pycache__
 db.sqlite3
 products/migrations/
 static_cdn/
+src/products/migrations/

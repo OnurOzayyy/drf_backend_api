@@ -13,7 +13,6 @@ class ProductQuerySet(models.query.QuerySet):
         """
         return self.filter(active=True)
 
-
 class ProductManager(models.Manager):
     """
     Model Manager for Product.
@@ -85,7 +84,6 @@ class Category(models.Model):
 
     def __str__(self):
         return self.title
-
 
     def get_absolute_url(self):
         return reverse("category_detail", kwargs={"slug": self.slug})

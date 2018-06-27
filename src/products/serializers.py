@@ -4,11 +4,19 @@ from .models import Category, Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
-
+    url = serializers.HyperlinkedIdentityField(view_name='product_detail-api')
+    image =serializers.SerializerMethodField()
     class Meta:
         model = Product
-        fields = '__all__'
-
+        fields = [
+            "id",
+            "url",
+            "title",
+            "price",
+            "image"
+        ]
+    def get_image(self, obj):
+        return obj.productimage_set.first().image.url
 
 class CategorySerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='category_detail-api')
