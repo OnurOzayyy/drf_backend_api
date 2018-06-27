@@ -1,5 +1,8 @@
 from django.db import models
 
+from django.utils.text import slugify
+
+
 class ProductQuerySet(models.query.QuerySet):
     """
     Query Set for the Product.
@@ -59,10 +62,16 @@ class Product(models.Model):
         """
         return reverse('product_detail', kwargs={'pk': self.pk})
 
+def image_upload_to(instance, filename):
+    title = instance.product.title
+    slug = slugify(title)
+    basename, file_extension = filename.split(".")
+    new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
+    return "products/%s/%s" %(slug, new_filename)
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='products/')
+    image = models.ImageField(upload_to=image_upload_to)
 
     def __str__(self):
         return self.product.title
