@@ -3,6 +3,21 @@ from rest_framework import serializers
 from .models import Category, Product
 
 
+class ProductDetailSerializer(serializers.ModelSerializer):
+    image =serializers.SerializerMethodField()
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "title",
+            "description",
+            "price",
+            "image"
+        ]
+    def get_image(self, obj):
+        return obj.productimage_set.first().image.url
+
+
 class ProductSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='product_detail-api')
     image =serializers.SerializerMethodField()
