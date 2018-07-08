@@ -29,7 +29,6 @@ class ProductManager(models.Manager):
         """
         return self.get_queryset().active()
 
-
 class Product(models.Model):
     """
     Product model.
@@ -74,6 +73,17 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return self.product.title
+
+class Variation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    title = models.CharField(max_length=120)
+    price = models.DecimalField(decimal_places=2, max_digits=20)
+    sale_price = models.DecimalField(decimal_places=2, max_digits=20, null=True, blank=True)
+    active = models.BooleanField(default=True)
+    inventory = models.IntegerField(null=True, blank=True) #refer none == unlimited amount
+
+    def __str__(self):
+        return self.title
 
 class Category(models.Model):
     title = models.CharField(max_length=120, unique=True)

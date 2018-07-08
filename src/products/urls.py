@@ -8,8 +8,8 @@ from products.views import (
     )
 
 urlpatterns = [
-    re_path('^api/categories/$', CategoryListAPIView.as_view(), name='categories_api'),
-    re_path('^api/categories/(?P<pk>\d+)/$', CategoryRetrieveAPIView.as_view(), name='category_detail-api'),
-    re_path('^api/products/$', ProductListAPIView.as_view(), name='products_api'),
-    re_path('^api/products/(?P<pk>\d+)/$', ProductRetrieveAPIView.as_view(), name='product_detail-api'),
+    re_path('^categories/$', CategoryListAPIView.as_view(), name='categories_api'),
+    re_path('^categories/(?P<pk>\d+)/$', CategoryRetrieveAPIView.as_view(), name='category_detail-api'),
+    re_path('^products/$', ProductListAPIView.as_view(), name='products_api'),
+    re_path('^products/(?P<pk>\d+)/$', ProductRetrieveAPIView.as_view(), name='product_detail-api'),
 ]
