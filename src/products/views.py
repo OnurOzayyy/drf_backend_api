@@ -5,10 +5,37 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
+
 
 from .serializers import CategorySerializer, ProductSerializer, ProductDetailSerializer
 from .models import Category, Product
 from .filters import ProductFilter
+
+class APIHomeView(APIView):
+    def get(self, request, format=None):
+        """
+        Home page view. Display: 
+            - Product count, url
+            - Category count, url
+        """
+        data = {
+            "products": {
+                "count": Product.objects.all().count(),
+                "url": reverse("products_api", request=request)
+
+            },
+            "categories": {
+                "count": Category.objects.all().count(), 
+                "url": reverse("categories_api",request=request)
+            }
+        }
+        return Response(data)
+
+
 
 class ProductListAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
