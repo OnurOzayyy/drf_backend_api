@@ -23,6 +23,7 @@ from django.urls import path, include, re_path
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^api/product/', include('products.urls')),
+    re_path(r'^api/orders/', include('orders.urls')),
 ]
 
 
