@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'products'
+    'products',
+    'orders'
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,9 @@ REST_FRAMEWORK = {
     ),
     "SEARCH_PARAM": 'q'
 }
+
+#Braintree Payments Details
+BRAINTREE_MERCHANT_ID = "mhkyv773ffmdqm5n"
+BRAINTREE_PUBLIC = "kc9cp723jkxvfk6p"
+BRAINTREE_PRIVATE = "2e1f06c7bdb5fea67ac81fe05439e173"
+BRAINTREE_ENVIROMENT = 'Sandbox'
