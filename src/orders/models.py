@@ -25,6 +25,10 @@ class UserCheckout(models.Model):
     
     @property
     def get_braintree_id(self):
+        """
+        If the user does not have braintree id, create a new customer
+        save the customer id as the braintree id for the user.  
+        """
         instance = self
         if not instance.braintree_id:
             result = gateway.customer.create({
@@ -36,6 +40,10 @@ class UserCheckout(models.Model):
         return instance.braintree_id
 
     def get_client_token(self):
+        """
+        if the user has a customer id in braintree, 
+        generate a client token. Save and return the client token. 
+        """
         customer_id = self.get_braintree_id
         if customer_id:
             client_token = gateway.client_token.generate({
@@ -45,6 +53,9 @@ class UserCheckout(models.Model):
         return None
 
 def update_braintree_id(sender, instance, *args, **kwargs):
+    """
+    if the user does not have a braintree id, create one. 
+    """
     if not instance.braintree_id:
         instance.get_braintree_id
 
