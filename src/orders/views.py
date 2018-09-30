@@ -46,6 +46,7 @@ class UserCheckoutMixin(object):
                 if user: 
                     user_checkout.user = user
                     user_checkout.save()
+                    print('user:',user)
             except: 
                 pass
         else: 

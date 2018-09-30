@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 
-
 from .serializers import CategorySerializer, ProductSerializer, ProductDetailSerializer
 from .models import Category, Product
 from .filters import ProductFilter
@@ -34,8 +33,6 @@ class APIHomeView(APIView):
             }
         }
         return Response(data)
-
-
 
 class ProductListAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
@@ -63,4 +60,3 @@ class CategoryRetrieveAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-

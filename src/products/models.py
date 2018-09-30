@@ -1,7 +1,9 @@
+"""
+Product Models.
+"""
 from django.db import models
-
+from django.urls import reverse
 from django.utils.text import slugify
-
 
 class ProductQuerySet(models.query.QuerySet):
     """
@@ -38,7 +40,8 @@ class Product(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=20)
     active = models.BooleanField(default=True)
     categories = models.ManyToManyField("Category", blank=True)
-    default = models.ForeignKey("Category", related_name='default_category', null=True, blank=True, on_delete=models.CASCADE)
+    default = models.ForeignKey("Category", related_name='default_category',
+                                null=True, blank=True, on_delete=models.CASCADE)
 
     objects = ProductManager()
 
@@ -61,6 +64,9 @@ class Product(models.Model):
         return reverse('product_detail', kwargs={'pk': self.pk})
 
 def image_upload_to(instance, filename):
+    """
+    Returns the path to upload an image.
+    """
     title = instance.product.title
     slug = slugify(title)
     basename, file_extension = filename.split(".")
@@ -68,13 +74,22 @@ def image_upload_to(instance, filename):
     return "products/%s/%s" %(slug, new_filename)
 
 class ProductImage(models.Model):
+    """
+    Product Image class.
+    """
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=image_upload_to)
 
     def __str__(self):
+        """
+        Return product title in string form.
+        """
         return self.product.title
 
 class Variation(models.Model):
+    """
+    Variation of a product.
+    """
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     title = models.CharField(max_length=120)
     price = models.DecimalField(decimal_places=2, max_digits=20)
@@ -83,9 +98,15 @@ class Variation(models.Model):
     inventory = models.IntegerField(null=True, blank=True) #refer none == unlimited amount
 
     def __str__(self):
+        """
+        Return human readable title.
+        """
         return self.title
 
 class Category(models.Model):
+    """
+    Category class.
+    """
     title = models.CharField(max_length=120, unique=True)
     slug = models.SlugField(unique=True)
     description = models.TextField(null=True, blank=True)
@@ -93,7 +114,13 @@ class Category(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     def __str__(self):
+        """
+        Return human readable title.
+        """
         return self.title
 
     def get_absolute_url(self):
+        """
+        Returns a string that can be used to refer to the object over HTTP.
+        """
         return reverse("category_detail", kwargs={"slug": self.slug})
