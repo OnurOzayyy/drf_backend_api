@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -140,6 +141,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
     ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+    ),
     "SEARCH_PARAM": 'q'
 }
 
@@ -148,3 +154,10 @@ BRAINTREE_MERCHANT_ID = "mhkyv773ffmdqm5n"
 BRAINTREE_PUBLIC = "kc9cp723jkxvfk6p"
 BRAINTREE_PRIVATE = "2e1f06c7bdb5fea67ac81fe05439e173"
 BRAINTREE_ENVIROMENT = 'Sandbox'
+
+#JWT 
+JWT_AUTH = {
+    "JWT_RESPONSE_PAYLOAD_HANDLER": "shop.utils.jwt_response_payload_handler", 
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    "JWT_ALLOW_REFRESH": True,
+}
