@@ -1,14 +1,14 @@
 from decimal import Decimal
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.db.models.signals import pre_save, post_save, post_delete
 
 
-
+from products.models import Variation
 class CartItem(models.Model):
-	cart = models.ForeignKey("Cart")
-	item = models.ForeignKey(Variation)
+	cart = models.ForeignKey("Cart", on_delete=models.CASCADE)
+	item = models.ForeignKey(Variation, on_delete=models.CASCADE)
 	quantity = models.PositiveIntegerField(default=1)
 	line_item_total = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -28,7 +28,6 @@ def cart_item_pre_save_receiver(sender, instance, *args, **kwargs):
 pre_save.connect(cart_item_pre_save_receiver, sender=CartItem)
 
 
-
 def cart_item_post_save_receiver(sender, instance, *args, **kwargs):
 	instance.cart.update_subtotal()
 
@@ -38,7 +37,7 @@ post_delete.connect(cart_item_post_save_receiver, sender=CartItem)
 
 
 class Cart(models.Model):
-	user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
 	items = models.ManyToManyField(Variation, through=CartItem)
 	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 	updated = models.DateTimeField(auto_now_add=False, auto_now=True)
@@ -51,7 +50,7 @@ class Cart(models.Model):
 def do_tax_and_total_receiver(sender, instance, *args, **kwargs):
 	subtotal = Decimal(instance.subtotal)
 	tax_total = round(subtotal * Decimal(instance.tax_percentage), 2) #8.5%
-	print instance.tax_percentage
+	print(instance.tax_percentage)
 	total = round(subtotal + Decimal(tax_total), 2)
 	instance.tax_total = "%.2f" %(tax_total)
 	instance.total = "%.2f" %(total)
