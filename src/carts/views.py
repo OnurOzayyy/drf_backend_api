@@ -9,26 +9,33 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from carts.models import Cart
+from carts.models import Cart, CartItem
 import base64
 import ast
+from django.shortcuts import get_object_or_404
+from products.models import Variation
+from django.http import HttpResponseRedirect, Http404, JsonResponse
+from carts.serializers import CartItemSerializer, CartVariationSerializer
 
-class CartAPIView(APIView):
+from carts.mixins import TokenMixin, CartUpdateAPIMixin
+
+
+class CartAPIView(TokenMixin, CartUpdateAPIMixin, APIView):
     token = None
     cart = None
 
-    def create_token(self, cart_id):
-        """
-        create a data object with the given cart id. 
-        Encode and return the token.
-        """
-        data = {
-            "cart_id": cart_id
-        }
-        byte_data = str(data).encode('ascii')
-        token = base64.b64encode(byte_data)
-        self.token = token 
-        return token 
+    # def create_token(self, cart_id):
+    #     """
+    #     Create a data object with the given cart id. 
+    #     Encode and return the token.
+    #     """
+    #     data = {
+    #         "cart_id": cart_id
+    #     }
+    #     byte_data = str(data).encode('ascii')
+    #     token = base64.b64encode(byte_data)
+    #     self.token = token 
+    #     return token 
         
     def get_cart(self):
         """
@@ -45,9 +52,8 @@ class CartAPIView(APIView):
         """
         token_data = self.request.GET.get('token')
         cart_obj = None
-        if token_data: 
-            token_decoded_dict = base64.b64decode(token_data).decode("utf-8") 
-            token_dict = ast.literal_eval(token_decoded_dict)
+        if token_data:
+            token_dict = self.parse_token(token=token_data)
             cart_id = token_dict.get('cart_id')
             try: 
                 cart_obj = Cart.objects.get(id=cart_id)
@@ -61,7 +67,10 @@ class CartAPIView(APIView):
             if self.request.user.is_authenticated: 
                 cart.user = self.request.user
             cart.save()
-            self.create_token(cart.id)
+            data = {
+                "cart_id": cart.id
+            }
+            self.create_token(data)
             cart_obj = cart 
         return cart_obj
 
@@ -72,13 +81,15 @@ class CartAPIView(APIView):
         """
         cart = self.get_cart()
         self.cart = cart 
-
+        self.update_cart()
+        items = CartItemSerializer(cart.cartitem_set.all(), many=True)
         data = {
             "cart": cart.id, 
             "total": cart.total,
             "subtotal": cart.subtotal, 
             "tax_total": cart.tax_total, 
             "token": self.token,
-            "items": cart.items.count()
+            "items": items.data, 
+            "count": cart.items.count()
         }
         return Response(data)

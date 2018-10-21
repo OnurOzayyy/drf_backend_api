@@ -6,6 +6,8 @@ from django.db.models.signals import pre_save, post_save, post_delete
 
 
 from products.models import Variation
+
+
 class CartItem(models.Model):
 	cart = models.ForeignKey("Cart", on_delete=models.CASCADE)
 	item = models.ForeignKey(Variation, on_delete=models.CASCADE)
@@ -46,6 +48,18 @@ class Cart(models.Model):
 	tax_total = models.DecimalField(max_digits=50, decimal_places=2, default=0.00)
 	total = models.DecimalField(max_digits=50, decimal_places=2, default=0.00)
 	active = models.BooleanField(default=True)
+
+	def __str__(self):
+		return str(self.id)
+	
+	def update_subtotal(self):
+		subtotal = 0 
+		items = self.cartitem_set.all()
+		for item in items: 
+			subtotal += item.line_item_total
+		self.subtotal = subtotal
+		self.save()
+
 
 def do_tax_and_total_receiver(sender, instance, *args, **kwargs):
 	subtotal = Decimal(instance.subtotal)

@@ -98,10 +98,24 @@ class Variation(models.Model):
     inventory = models.IntegerField(null=True, blank=True) #refer none == unlimited amount
 
     def __str__(self):
-        """
-        Return human readable title.
-        """
-        return self.title
+        return str(self.id)
+
+    def get_price(self):
+        if self.sale_price:
+            return self.sale_price
+        else: return self.price 
+    
+    def add_to_cart(self):
+        return f'{reverse("cart_api")}?item={self.id}&qty=1'
+    
+    def get_absolute_url(self):
+        return self.product.get_absolute_url()
+
+    def remove_from_cart(self):
+        return f'{reverse(cart_api)}?item={self.id}&qty=1&delete=True'
+    
+    def get_title(self):
+        return f'{self.product.title} - {self.title}'
 
 class Category(models.Model):
     """
