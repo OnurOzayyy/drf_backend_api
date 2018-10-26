@@ -23,7 +23,14 @@ from rest_framework import status
 class CheckoutAPIView(CartTokenMixin, APIView):
     def get(self, request, format=None):
         data, cart_obj, response_status = self.get_cart_from_token()
-        #print(cart_obj.items.all())
+        if cart_obj: 
+            if cart_obj.items.count() == 0:
+                data = {
+                    "message": "Your cart is empty."
+                }
+                response_status = status.HTTP_400_BAD_REQUEST
+            else: # create an order.
+                pass
         return Response(data, status=response_status)
 
 
