@@ -17,26 +17,19 @@ from products.models import Variation
 from django.http import HttpResponseRedirect, Http404, JsonResponse
 from carts.serializers import CartItemSerializer, CartVariationSerializer
 
-from carts.mixins import TokenMixin, CartUpdateAPIMixin
+from carts.mixins import TokenMixin, CartUpdateAPIMixin, CartTokenMixin
+from rest_framework import status
+
+class CheckoutAPIView(CartTokenMixin, APIView):
+    def get(self, request, format=None):
+        data, cart_obj, response_status = self.get_cart_from_token()
+        #print(cart_obj.items.all())
+        return Response(data, status=response_status)
 
 
-class CartAPIView(TokenMixin, CartUpdateAPIMixin, APIView):
-    token = None
+class CartAPIView(CartTokenMixin, CartUpdateAPIMixin, APIView):
     cart = None
-
-    # def create_token(self, cart_id):
-    #     """
-    #     Create a data object with the given cart id. 
-    #     Encode and return the token.
-    #     """
-    #     data = {
-    #         "cart_id": cart_id
-    #     }
-    #     byte_data = str(data).encode('ascii')
-    #     token = base64.b64encode(byte_data)
-    #     self.token = token 
-    #     return token 
-        
+    token_param = 'token'
     def get_cart(self):
         """
         Get the token from the url. 
@@ -50,16 +43,7 @@ class CartAPIView(TokenMixin, CartUpdateAPIMixin, APIView):
             save the cart and create a token for the cart
         return the cart object.
         """
-        token_data = self.request.GET.get('token')
-        cart_obj = None
-        if token_data:
-            token_dict = self.parse_token(token=token_data)
-            cart_id = token_dict.get('cart_id')
-            try: 
-                cart_obj = Cart.objects.get(id=cart_id)
-            except: 
-                pass
-            self.token = token_data
+        data, cart_obj, response_status =self.get_cart_from_token()
         
         if cart_obj == None: 
             cart = Cart()
