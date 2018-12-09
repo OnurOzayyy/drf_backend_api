@@ -4,6 +4,17 @@ from products.models import Variation
 from .models import CartItem
 
 
+class CheckoutSerializer(serializers.Serializer):
+    checkout_token = serializers.CharField()
+    user_checkout_id = serializers.IntegerField(required=False)
+    billing_address = serializers.IntegerField()
+    shipping_address = serializers.IntegerField()
+    cart_token = serializers.CharField()
+    cart_id = serializers.IntegerField(required=False)
+
+
+
+
 class CartVariationSerializer(serializers.ModelSerializer):
     product = serializers.SerializerMethodField()
     class Meta: 

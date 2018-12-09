@@ -5,12 +5,35 @@ from django.contrib.auth import get_user_model
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, ListAPIView
+from .models import UserCheckout, UserAddress
+from .serializers import UserAddressSerializer
 
-from .models import UserCheckout
-
+from carts.mixins import TokenMixin
 User = get_user_model()
 
-class UserCheckoutMixin(object):
+
+class UserAddressCreateAPIView(CreateAPIView):
+    model = UserAddress 
+    serializer_class = UserAddressSerializer
+
+class UserAddressListAPIView(TokenMixin, ListAPIView):
+    model = UserAddress 
+    queryset = UserAddress.objects.all()
+    serializer_class = UserAddressSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        user_checkout_token = self.request.GET.get("checkout_token")
+        user_checkout_data = self.parse_token(user_checkout_token)
+        user_checkout_id = user_checkout_data.get('user_checkout_id')
+        if self.request.user.is_authenticated:
+            return UserAddress.objects.filter(user__user=self.request.user)
+        elif user_checkout_id:
+            return UserAddress.objects.filter(user__id=int(user_checkout_id))
+        else: 
+            return []
+
+class UserCheckoutMixin(TokenMixin, object):
     
     def user_failure(self, message=None):
         """
@@ -46,17 +69,22 @@ class UserCheckoutMixin(object):
                 if user: 
                     user_checkout.user = user
                     user_checkout.save()
-                    print('user:',user)
+                    print('user:', user)
             except: 
                 pass
         else: 
             pass
             
         if user_checkout:
-            data['token'] = user_checkout.get_client_token()
+            data["success"] = True
             data['braintree_id'] = user_checkout.get_braintree_id
             data['user_checkout_id'] = user_checkout.id
-            data["success"] = True
+            data['user_checkout_token'] = self.create_token(data)
+
+            del data["braintree_id"]
+            del data["user_checkout_id"]
+            data['braintree_client_token'] = user_checkout.get_client_token()
+            
         return data
     
 class UserCheckoutAPI(UserCheckoutMixin, APIView):

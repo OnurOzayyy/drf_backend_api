@@ -59,7 +59,10 @@ class Cart(models.Model):
 			subtotal += item.line_item_total
 		self.subtotal = subtotal
 		self.save()
-
+	
+	def is_complete(self):
+		self.active = False 
+		self.save()
 
 def do_tax_and_total_receiver(sender, instance, *args, **kwargs):
 	subtotal = Decimal(instance.subtotal)

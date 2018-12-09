@@ -68,6 +68,11 @@ class CartTokenMixin(TokenMixin, object):
     token_param = 'cart_token'
     token = None
     def get_cart_from_token(self):
+        """
+        Retrieve the cart obj: 
+            - if not valid return 404
+            - else return the data, cart and response status. 
+        """
         request = self.request
         response_status = status.HTTP_200_OK
         cart_token = request.GET.get(self.token_param)
