@@ -33,8 +33,6 @@ urlpatterns = [
     re_path(r'^api/', include('orders.urls')),
     re_path(r'^api/auth/token/$', obtain_jwt_token),
     re_path(r'^api/auth/token/refresh/$', refresh_jwt_token)
-    
-
 ]
 
 

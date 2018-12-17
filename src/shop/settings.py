@@ -40,16 +40,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_filters',
-
     'rest_framework',
+    'django_extensions',
+    'corsheaders',
 
     'products',
     'orders', 
     'carts',
-    'django_extensions',
+    
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
