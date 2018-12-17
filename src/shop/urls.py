@@ -21,17 +21,20 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
-from carts.views import CartAPIView, CheckoutAPIView
+from carts.views import CartAPIView, CheckoutAPIView, CheckoutFinalizeAPIView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^api/product/', include('products.urls')),
     re_path(r'api/cart/$', CartAPIView.as_view(), name='cart_api'),
-    re_path(r'api/checkout/', CheckoutAPIView.as_view(), name='checkout_api'),
+    re_path(r'api/checkout/$', CheckoutAPIView.as_view(), name='checkout_api'),
+    re_path(r'api/checkout/finalize/$', CheckoutFinalizeAPIView.as_view(), name='checkout_api_finalize'),
     re_path(r'^api/', include('orders.urls')),
     re_path(r'^api/auth/token/$', obtain_jwt_token),
-    re_path(r'^api/auth/token/refresh/$', refresh_jwt_token),
+    re_path(r'^api/auth/token/refresh/$', refresh_jwt_token)
+    
+
 ]
 
 
