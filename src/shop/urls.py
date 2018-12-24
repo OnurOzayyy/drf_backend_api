@@ -31,8 +31,8 @@ urlpatterns = [
     re_path(r'api/checkout/$', CheckoutAPIView.as_view(), name='checkout_api'),
     re_path(r'api/checkout/finalize/$', CheckoutFinalizeAPIView.as_view(), name='checkout_api_finalize'),
     re_path(r'^api/', include('orders.urls')),
-    re_path(r'^api/auth/token/$', obtain_jwt_token),
-    re_path(r'^api/auth/token/refresh/$', refresh_jwt_token)
+    re_path(r'^api/auth/token/$', obtain_jwt_token, name="auth_login_api"),
+    re_path(r'^api/auth/token/refresh/$', refresh_jwt_token, name="refresh_token_api")
 ]
 
 

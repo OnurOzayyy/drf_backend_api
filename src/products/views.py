@@ -21,15 +21,32 @@ class APIHomeView(APIView):
             - Product count, url
             - Category count, url
         """
+
         data = {
+            "auth": {
+                "login_url": reverse("auth_login_api", request=request),
+                "refresh_url": reverse("refresh_token_api", request=request),
+                "user_checkout": reverse("user_checkout_api", request=request)
+            },
+            "address": {
+                "url": reverse("user_address_list", request=request),
+                "create": reverse("user_address_create", request=request)
+            },
+            "checkout": {
+                "cart": reverse("cart_api", request=request),
+                "checkout": reverse("checkout_api", request=request),
+                "finalize": reverse("checkout_api_finalize", request=request)
+            },
             "products": {
                 "count": Product.objects.all().count(),
                 "url": reverse("products_api", request=request)
-
             },
             "categories": {
                 "count": Category.objects.all().count(), 
                 "url": reverse("categories_api",request=request)
+            },
+            "orders": {
+                "url": reverse("orders_api",request=request),
             }
         }
         return Response(data)

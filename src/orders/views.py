@@ -2,16 +2,38 @@ from django.shortcuts import render
 
 from django.contrib.auth import get_user_model
 
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView, ListAPIView
-from .models import UserCheckout, UserAddress
-from .serializers import UserAddressSerializer
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
+from .models import UserCheckout, UserAddress, Order
+from .serializers import UserAddressSerializer, OrderSerializer
 
 from carts.mixins import TokenMixin
 User = get_user_model()
 
+from .permissions import IsOwnerandAuth
+
+class OrderRetrieveAPIView(RetrieveAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsOwnerandAuth]
+    model = Order 
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        return Order.objects.filter(user__user=self.request.user)
+
+class OrderListAPIView(ListAPIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsOwnerandAuth]
+    model = Order
+    serializer_class = OrderSerializer
+    queryset = Order.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        return Order.objects.filter(user__user=self.request.user)
 
 class UserAddressCreateAPIView(CreateAPIView):
     model = UserAddress 

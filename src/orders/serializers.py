@@ -41,6 +41,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "shipping_address", 
             "billing_address", 
             "subtotal", 
+            "order_id",
             "order_total"
         ]
     def get_subtotal(self, obj):
