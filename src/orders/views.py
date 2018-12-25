@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from .models import UserCheckout, UserAddress, Order
-from .serializers import UserAddressSerializer, OrderSerializer
+from .serializers import UserAddressSerializer, OrderSerializer, OrderDetailSerializer
 
 from carts.mixins import TokenMixin
 User = get_user_model()
@@ -20,7 +20,7 @@ class OrderRetrieveAPIView(RetrieveAPIView):
     permission_classes = [IsOwnerandAuth]
     model = Order 
     queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    serializer_class = OrderDetailSerializer
 
     def get_queryset(self, *args, **kwargs):
         return Order.objects.filter(user__user=self.request.user)
@@ -29,7 +29,7 @@ class OrderListAPIView(ListAPIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsOwnerandAuth]
     model = Order
-    serializer_class = OrderSerializer
+    serializer_class = OrderDetailSerializer
     queryset = Order.objects.all()
 
     def get_queryset(self, *args, **kwargs):

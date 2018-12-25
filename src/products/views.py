@@ -71,9 +71,8 @@ class CategoryListAPIView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-
 class CategoryRetrieveAPIView(generics.RetrieveAPIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    #authentication_classes = [SessionAuthentication]
+    #permission_classes = [IsAuthenticated]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
